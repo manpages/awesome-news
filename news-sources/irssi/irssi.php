@@ -1,7 +1,7 @@
 <?
-	$HOSTNAME 	= 'example.com';
-	$PORT		= '1337';
-	$AN_SERVER	= 'an_generic_receiver';
+	$HOSTNAME 	= 'hostname';
+	$PORT		= 'port';
+	$AN_SERVER	= 'an_libnotify';
 
 	if (!function_exists('json_encode')) {
 		function json_encode($data) {
@@ -40,12 +40,14 @@
 		}
 	}
 
-	if (count($argv) != 3) die ('USAGE: php irssi.php CAT_ID CAT_NAME'."\n");
+	if (count($argv) != 3) die ('USAGE: php irssi.php SUMMARY DATA'."\n");
 
-	$fp = fsockopen($HOSTNAME, $PORT);
-	fwrite ($fp, json_encode(
-		array(
-			array ($AN_SERVER => "\"$argv[1]\" \"$argv[2]\"")
-		)
-	));
-	fclose($fp);
+	$fp;
+	if ($fp = @fsockopen($HOSTNAME, $PORT)) {
+		fwrite ($fp, json_encode(
+			array(
+				array ($AN_SERVER => "\"$argv[1]\" \"$argv[2]\"")
+			)
+		));
+		fclose($fp);
+	}

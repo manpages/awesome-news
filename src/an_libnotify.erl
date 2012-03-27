@@ -1,4 +1,4 @@
--module(an_receiver).
+-module(an_libnotify).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -15,7 +15,7 @@ start() ->
 	resource_bootstrap(PID).
 
 resource_bootstrap(PID) ->
-	resource_discovery:add_local_resource_tuple({an_generic_receiver, PID}).
+	resource_discovery:add_local_resource_tuple({an_libnotify, PID}).
 
 notify(PID, Data) ->
 	?debugFmt("OMAI!!!~p",[Data]),
@@ -32,8 +32,7 @@ handle_call(_Msg, _Caller, State) -> {noreply, State}.
 handle_info(_Msg, Library) -> {noreply, Library}.
 handle_cast({notify, Data}, State) ->
 	?debugFmt("roflmao~p", [Data]),
-	io:format("~p", [Data]),
-	%os:cmd("export DISPLAY=:0;notify-send " ++ Data),
+	os:cmd("export DISPLAY=:0;notify-send " ++ Data),
 	{noreply, State}
 ;
 handle_cast(_Msg, Library) -> 

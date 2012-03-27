@@ -1,4 +1,4 @@
-{application,awesome_news,
+{application,an_sender,
 	[
 		{description,"Erlang-based notifier"},
 
@@ -10,19 +10,17 @@
 			json, socket_server,
 
 			%% SENDER
-			an_sender, an_sender_sup, an_sender_app,
-
-			%% RECEIVER
-			an_receiver, an_receiver_sup, an_receiver_app
+			an_sender, an_sender_sup, an_sender_app
 		]},
 
-		{registered,[]},
+		{registered,[an_sender_app]},
 
 		{applications, [
 			kernel,
 			stdlib,
 			resource_discovery
-		]}
+		]},
 
+		{mod,{an_sender_app,[]}}
 	]
 }.
