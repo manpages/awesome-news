@@ -1,0 +1,5 @@
+Copy the conets of that directory to ~/.irssi/. 
+And change $HOSTNAME and $PORT variables to point at your an_sender instance.
+
+Finally, "/LOAD notify.pl" at the startup of irssi. 
+You may put notify.pl in the ~/.irssi/scripts/autoload if you want it to be automatically loaded.
