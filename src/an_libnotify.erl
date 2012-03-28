@@ -1,5 +1,6 @@
 -module(an_libnotify).
 
+-define(NODEBUG, 1).
 -include_lib("eunit/include/eunit.hrl").
 
 -behavior(gen_server).

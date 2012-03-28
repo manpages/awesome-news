@@ -1,5 +1,6 @@
 -module(an_sender).
 
+%%-define(NODEBUG, 1).
 -include_lib("eunit/include/eunit.hrl").
 
 -behavior(gen_server).
@@ -7,6 +8,7 @@
 %-compile(export_all).
 -export([init/1, code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 -export([start/0, loop/1]).
+
 
 start() ->
 	resource_bootstrap(),
@@ -20,34 +22,36 @@ loop(Socket) ->
     case gen_tcp:recv(Socket, 0) of
         {ok, Data} ->
 			?debugFmt("recv~p", [Data]),
-			Json = case json:decode_string(binary_to_list(Data)) of
-				{ok, X} -> 
+			IOResult = (catch io:format("~ts~n", [unicode:characters_to_list(Data)])),
+			?debugFmt("~p", IOResult),
+			Json = case catch(jiffy:decode(Data)) of
+				{error, Error} -> 
+					?debugHere,
+            		gen_tcp:send(Socket, <<"Your JSON is fucked up, sir\r\n">>),
+					Error;
+				X -> 
+					?debugFmt("X~p", [X]),
             		gen_tcp:send(Socket, <<"JSON parsed\r\n">>),
 					case (catch broadcast(X)) of 
 						{'EXIT', Trace} -> 
 							?debugFmt("broadcast failed~p", [Trace]),
 							gen_tcp:send(Socket, <<"Protocol mismatch or broadcast failiure\r\n">>);
 						Result -> Result
-					end;
-				Error -> 
-            		gen_tcp:send(Socket, <<"Your JSON is fucked up, sir\r\n">>),
-					Error
+					end
 			end,
 			?debugFmt("decoded~p", [Json]),
             loop(Socket);
         {error, closed} ->
 			?debugMsg("hujs."),
             ok
-    end
-.
+    end.
 
 rediscover(ResourceTypes) -> 
 	resource_discovery:add_target_resource_types(
 		ResourceTypes
 	),
 	resource_discovery:trade_resources(),
-	?debugMsg("rediscovered")
-.
+	?debugMsg("rediscovered").
 
 broadcast(JsonStructure) ->
 	?debugMsg("broadcasting"),
@@ -69,8 +73,7 @@ broadcast(JsonStructure) ->
 				TupleList
 			); 
 		_ -> error 
-	end
-.
+	end.
 
 
 % These are just here to suppress warnings.

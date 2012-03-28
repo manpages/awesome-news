@@ -9,6 +9,5 @@
 ]).
 
 start (_T, _A) -> 
-	?debugHere,
 	an_sender_sup:start_link().
 stop (_S) -> ok.

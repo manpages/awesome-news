@@ -8,6 +8,7 @@
 -export([start/3]).
 
 -define(TCP_OPTIONS, [binary, {packet, 0}, {active, false}, {reuseaddr, true}]).
+-define(NODEBUG, true).
 
 -record(server_state, {
         port,
@@ -16,12 +17,10 @@
         lsocket=null}).
 
 start(Name, Port, Loop) ->
-	?debugHere,
     State = #server_state{port = Port, loop = Loop},
     gen_server:start_link({local, Name}, ?MODULE, State, []).
 
 init(State = #server_state{port=Port}) ->
-	?debugHere,
     case gen_tcp:listen(Port, ?TCP_OPTIONS) of
    		{ok, LSocket} ->
    			NewState = State#server_state{lsocket = LSocket},
@@ -31,11 +30,9 @@ init(State = #server_state{port=Port}) ->
     end.
 
 handle_cast({accepted, _Pid}, State=#server_state{}) ->
-	?debugHere,
     {noreply, accept(State)}.
 
 accept_loop({Server, LSocket, {M, F}}) ->
-	?debugHere,
     {ok, Socket} = gen_tcp:accept(LSocket),
     % Let the server spawn a new process and replace this loop
     % with the echo loop, to avoid blocking 
@@ -44,12 +41,10 @@ accept_loop({Server, LSocket, {M, F}}) ->
     
 % To be more robust we should be using spawn_link and trapping exits
 accept(State = #server_state{lsocket=LSocket, loop = Loop}) ->
-	?debugHere,
     proc_lib:spawn(?MODULE, accept_loop, [{self(), LSocket, Loop}]),
     State.
 
-% These are just here to suppress warnings.
 handle_call(_Msg, _Caller, State) -> {noreply, State}.
-handle_info(_Msg, Library) -> {noreply, Library}.
-terminate(_Reason, _Library) -> ok.
-code_change(_OldVersion, Library, _Extra) -> {ok, Library}.
+handle_info(_Msg, State) -> {noreply, State}.
+terminate(_Reason, _State) -> ok.
+code_change(_OldVersion, State, _Extra) -> {ok, State}.

@@ -1,5 +1,6 @@
 -module(an_receiver).
 
+-define(NODEBUG, 1).
 -include_lib("eunit/include/eunit.hrl").
 
 -behavior(gen_server).
@@ -10,15 +11,18 @@
 
 -define(SERVER, ?MODULE).
 
+
 start() ->
+	?debugHere,
 	{ok, PID} = gen_server:start_link({local, ?SERVER}, ?MODULE, [], []),
-	resource_bootstrap(PID).
+	resource_bootstrap(PID),
+	{ok, PID}.
 
 resource_bootstrap(PID) ->
+	?debugHere,
 	resource_discovery:add_local_resource_tuple({an_generic_receiver, PID}).
 
 notify(PID, Data) ->
-	?debugFmt("OMAI!!!~p",[Data]),
 	gen_server:cast(PID, {notify, Data}),
 	ok
 .
@@ -32,7 +36,8 @@ handle_call(_Msg, _Caller, State) -> {noreply, State}.
 handle_info(_Msg, Library) -> {noreply, Library}.
 handle_cast({notify, Data}, State) ->
 	?debugFmt("roflmao~p", [Data]),
-	io:format("~p", [Data]),
+	io:format("~ts~n", [json:encode(Data)]),
+	%io:format("~ts~n", [json:encode(Data)]),
 	%os:cmd("export DISPLAY=:0;notify-send " ++ Data),
 	{noreply, State}
 ;
