@@ -13,7 +13,8 @@
 
 start() ->
 	{ok, PID} = gen_server:start_link({local, ?SERVER}, ?MODULE, [], []),
-	resource_bootstrap(PID).
+	resource_bootstrap(PID),
+	{ok, PID}.
 
 resource_bootstrap(PID) ->
 	resource_discovery:add_local_resource_tuple({an_libnotify, PID}).
@@ -32,8 +33,9 @@ handle_call({notify, Data}, Caller, State) ->
 handle_call(_Msg, _Caller, State) -> {noreply, State}.
 handle_info(_Msg, Library) -> {noreply, Library}.
 handle_cast({notify, Data}, State) ->
-	?debugFmt("roflmao~p", [Data]),
-	os:cmd("export DISPLAY=:0;notify-send " ++ Data),
+	%Utf8Cmd = io_lib:format("export DISPLAY=:0;notify-send ~ts", [Data]),
+	io:format("~ts~n", [Data]),
+	%os:cmd(Utf8Cmd), !!!!BUG!!!!
 	{noreply, State}
 ;
 handle_cast(_Msg, Library) -> 

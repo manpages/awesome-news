@@ -5,10 +5,6 @@
 		{vsn,"0.1"},
 
 		{modules, [
-
-			%% GENERAL PURPOSE
-			json, socket_server,
-
 			%% SENDER
 			an_sender, an_sender_sup, an_sender_app
 		]},
@@ -18,9 +14,11 @@
 		{applications, [
 			kernel,
 			stdlib,
-			resource_discovery
+			resource_discovery,
+			yaws
 		]},
 
-		{mod,{an_sender_app,[]}}
+		{mod,{an_sender_app,[]}} 
+
 	]
 }.

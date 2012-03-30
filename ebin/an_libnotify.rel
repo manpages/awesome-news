@@ -2,5 +2,4 @@
  [{kernel,"2.14.5"},
   {stdlib,"1.17.5"},
   {resource_discovery, "0.2.1.0"},
-  {an_sender, "0.1"},
-  {yaws, "1.92"}]}.
+  {an_libnotify, "0.1"}]}.

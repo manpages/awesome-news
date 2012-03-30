@@ -21,10 +21,14 @@ loop(Socket) ->
 	?debugHere,
     case gen_tcp:recv(Socket, 0) of
         {ok, Data} ->
-			?debugFmt("recv~p", [Data]),
-			IOResult = (catch io:format("~ts~n", [unicode:characters_to_list(Data)])),
-			?debugFmt("~p", IOResult),
-			Json = case catch(jiffy:decode(Data)) of
+			%?debugFmt("recv~p", [Data]),
+			UnicodeList = case unicode:characters_to_list(Data) of
+				{_,Encoded,_Rest} -> Encoded;
+				List -> List
+			end,
+			IOResult = (catch io:format("~ts~n", [UnicodeList])),
+			?debugFmt("~p", [unicode:characters_to_list(Data)]),
+			Json = case catch(json:decode_string(Data)) of
 				{error, Error} -> 
 					?debugHere,
             		gen_tcp:send(Socket, <<"Your JSON is fucked up, sir\r\n">>),

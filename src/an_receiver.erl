@@ -35,10 +35,7 @@ handle_call({notify, Data}, Caller, State) ->
 handle_call(_Msg, _Caller, State) -> {noreply, State}.
 handle_info(_Msg, Library) -> {noreply, Library}.
 handle_cast({notify, Data}, State) ->
-	?debugFmt("roflmao~p", [Data]),
-	io:format("~ts~n", [json:encode(Data)]),
-	%io:format("~ts~n", [json:encode(Data)]),
-	%os:cmd("export DISPLAY=:0;notify-send " ++ Data),
+	io:format("~ts~n", [Data]),
 	{noreply, State}
 ;
 handle_cast(_Msg, Library) -> 

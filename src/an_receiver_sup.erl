@@ -1,5 +1,6 @@
 -module(an_receiver_sup).
 
+-define(NODEBUG, 1).
 -include_lib("eunit/include/eunit.hrl").
 -behavior(supervisor).
 

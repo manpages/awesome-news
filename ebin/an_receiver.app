@@ -21,7 +21,6 @@
 			resource_discovery
 		]},
 
-		
 		{mod,{an_receiver_app,[]}} 
 
 	]

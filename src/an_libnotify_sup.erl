@@ -1,5 +1,7 @@
--module(an_sender_sup).
+-module(an_libnotify_sup).
 
+-define(NODEBUG, 1).
+-include_lib("eunit/include/eunit.hrl").
 -behavior(supervisor).
 
 -export([
@@ -10,26 +12,24 @@
 -define(SERVER, ?MODULE).
 
 start_link() ->
-	bootstrap(),
+	?debugHere,
 	supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 init([]) ->
+	?debugHere,
 	RestartStrategy    = one_for_one,
 	MaxRestarts        = 1000,
 	MaxTimeBetRestarts = 3600,
 	SupFlags = {RestartStrategy, MaxRestarts, MaxTimeBetRestarts},
 
-	ChildSpecs = [ %% also dirty as fuck
-		{yaws_sup,
-			{yaws_sup, start_link, []},
+	ChildSpecs = [ 
+		{an_libnotify, %% we fire generic libnotify that writes stuff to stdout
+			{an_libnotify, start, []},
 			permanent,
 			1000,
-			supervisor,
-			[yaws_sup]
+			worker,
+			[an_libnotify]
 		}
 	],
-	{ok, {SupFlags, ChildSpecs}}.
-
-bootstrap() -> %% dirty-dirty
-	application:start(resource_discovery),
-	resource_discovery:add_target_resource_type(an_generic_receiver).
+	{ok, {SupFlags, ChildSpecs}}
+.
