@@ -1,0 +1,34 @@
+<erl>
+
+rediscover(ResourceTypes) -> 
+	resource_discovery:add_target_resource_types(
+		ResourceTypes
+	),
+	resource_discovery:trade_resources().
+
+encode_data(X) ->
+	(list_to_binary(X)).
+
+bcast([]) -> ok;
+bcast([{Key, Data} | Tail]) ->
+	AtomKey = list_to_atom(Key),
+	resource_discovery:add_target_resource_type(AtomKey),
+	lists:foreach(
+		fun(Res) -> 
+			an_receiver:notify(Res, encode_data(Data))
+		end, resource_discovery:get_resources(AtomKey)
+	),
+	bcast(Tail).
+
+out(A) -> 
+	HTML = case erlang:element(2, A#arg.req) of
+		'GET'  -> "Nothing to do here.";
+		'POST' ->
+			bcast(yaws_api:parse_post(A)),
+			"ok"
+		end,
+
+	{html, HTML}.
+
+
+</erl>
