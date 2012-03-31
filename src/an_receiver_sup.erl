@@ -23,12 +23,12 @@ init([]) ->
 	SupFlags = {RestartStrategy, MaxRestarts, MaxTimeBetRestarts},
 
 	ChildSpecs = [ 
-		{an_receiver, %% we fire generic receiver that writes stuff to stdout
-			{an_receiver, start, []},
+		{an_generic_receiver, %% we fire generic receiver that writes stuff to stdout
+			{an_receiver, start, [an_generic_receiver]},
 			permanent,
 			1000,
 			worker,
-			[an_receiver, socket_server]
+			[an_receiver]
 		}
 	],
 	{ok, {SupFlags, ChildSpecs}}

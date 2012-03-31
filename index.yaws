@@ -11,6 +11,7 @@ encode_data(X) ->
 
 bcast([]) -> ok;
 bcast([{Key, Data} | Tail]) ->
+	io:format("Broadcasting to ~p~n", [Key]),
 	AtomKey = list_to_atom(Key),
 	resource_discovery:add_target_resource_type(AtomKey),
 	lists:foreach(
@@ -21,12 +22,14 @@ bcast([{Key, Data} | Tail]) ->
 	bcast(Tail).
 
 out(A) -> 
+	io:format("<post>~n"),
 	HTML = case erlang:element(2, A#arg.req) of
 		'GET'  -> "Nothing to do here.";
 		'POST' ->
 			bcast(yaws_api:parse_post(A)),
 			"ok"
 		end,
+	io:format("</post>~n==="),
 
 	{html, HTML}.
 

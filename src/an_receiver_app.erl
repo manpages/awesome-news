@@ -1,5 +1,6 @@
 -module(an_receiver_app).
 
+-define(NODEBUG, 1).
 -include_lib("eunit/include/eunit.hrl").
 -behavior(application).
 
@@ -9,5 +10,7 @@
 ]).
 
 start (_T, _A) -> 
-	an_receiver_sup:start_link().
+	X = an_receiver_sup:start_link(),
+	?debugFmt("start/2 -> ~p", [X]),
+	X.
 stop (_S) -> ok.
