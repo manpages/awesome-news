@@ -1,0 +1,9 @@
+So that's Scriptlance project notification callback thingie.
+With some really cosmetic tweaks can be transformed into generic mutt mail notifier.
+
+To get it running just update your .procmailrc according to the ./procmailrc. Make sure
+that it points to the correct place of the shell script and that the php script is found
+correctly by the shell script.
+
+By default, it sends notifications to an_google_chrome (started as server.sh google_chrome),
+an_generic_receiver and an_libnotify.

@@ -9,6 +9,7 @@ use strict;
 use Irssi;
 use vars qw($VERSION %IRSSI);
 use HTML::Entities;
+use utf8;
 
 $VERSION = "0.01";
 %IRSSI = (
@@ -25,7 +26,10 @@ Irssi::settings_add_str('notify', 'notify_time', '5000');
 
 sub sanitize {
   my ($text) = @_;
-  encode_entities($text);
+  #encode_entities($text);
+  $text =~ s/"/\\"/g;
+  $text =~ s/\$/\\\$/g;
+  #print $text;
   return $text;
 }
 
@@ -43,7 +47,7 @@ sub notify {
 	" '" . $message . "'";
 
 	my $cloud_notification = "EXEC - php -n" .
-	" ~/.irssi/irssi.php '" . $summary . "' '" . $message . "'";
+	" ~/.irssi/irssi.php \"" . $summary . "\" \"" . $message . "\"";
 
     #$server->command($cmd);
 	$server->command($cloud_notification);

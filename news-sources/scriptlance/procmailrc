@@ -1,0 +1,16 @@
+PATH=/bin:/usr/bin:/usr/local/bin 
+VERBOSE=on  
+DEFAULT=/var/spool/mail/caldari
+MAILDIR=$HOME/Mail            
+LOGFILE=$HOME/.procmaillog  
+# Recipes below this comment:
+#
+
+# Notify of incoming SL jobs
+# The actual email is dropped by get_sl_url.sh 
+# if the project URL is found. Else - preserved.
+:0 fW
+* ^Subject:.*New ScriptLance Project Notice.*
+| /home/user/.awesome_news/raise/get_sl_url.sh
+# please make sure it points to the actual place
+# where the get_sl_url.sh is.

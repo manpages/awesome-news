@@ -1,7 +1,7 @@
 <?
-	$HOSTNAME 	= ''; //the hostname of an_sender
-	$PORT		= ''; //the port of an_sender (see yaws.conf)
-	$AN_SERVER	= 'an_libnotify';
+	$HOSTNAME 	= '';
+	$PORT		= '';
+	$AN_SERVER	= 'an_google_chrome';
 
 	function do_post_request($url, $data, $optional_headers = null)
 	{
@@ -62,25 +62,23 @@
 		}
 	}
 
-	if (count($argv) != 3 || !$HOSTNAME || !$PORT) die ('USAGE: php irssi.php SUMMARY DATA. You also must configure awesome-news sender hostname and port in irssi.php.'."\n");
+	if (count($argv) != 2) die ('USAGE: sl.php DATA. You also must provide hostname and port of an_sender instance in sl.php'."\n");
 
 	//$argv[1] = utf8_encode($argv[1]);
 	//$argv[2] = utf8_encode($argv[2]);
 	//print_r($argv);
 
-	$esc[1] = str_replace('"', '\"', $argv[1]);
-	$esc[2] = str_replace('"', '\"', $argv[2]);
-
-	$$AN_SERVER = "\"$esc[1]\" \"$esc[2]\"";
+	$$AN_SERVER = $argv[1];
+	$an_libnotify = "\"mutt\" \"New Scriptlance Project\"";
 	$an_generic_receiver = json_encode(
-			array ("service" => "irssi", "event" => "highlight", "data" =>
-					array ("summary" => $argv[1], "text" => $argv[2])
+			array ("service" => "mutt", "event" => "scriptlance", "data" =>
+					array ("url" => $argv[1])
 				)
 			);
 
 	do_post_request('http://'.$HOSTNAME.':'.$PORT, 
 		$AN_SERVER.'='.urlencode($$AN_SERVER) . 
 		'&an_generic_receiver='.urlencode($an_generic_receiver) .
-		'&an_random='.urlencode(time())
+		'&an_libnotify='.urlencode($an_libnotify)
 	);
 	//do_post_request('http://'.$HOSTNAME.':'.$PORT, 'a=АД');
